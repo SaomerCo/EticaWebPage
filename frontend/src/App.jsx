@@ -6,7 +6,7 @@ import MateriaDetail from './pages/MateriaDetail.jsx';
 import Calendario from './pages/Calendario.jsx';
 import Chat from './pages/Chat.jsx';
 import NotFound from './pages/NotFound.jsx';
- 
+
 // Patrón de "layout route": Layout (Navbar + Footer) envuelve a todas
 // las páginas hijas. Cada página solo se preocupa de su propio contenido.
 function App() {
@@ -30,6 +30,5 @@ function App() {
     </BrowserRouter>
   );
 }
- 
+
 export default App;
- 

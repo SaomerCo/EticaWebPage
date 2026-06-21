@@ -557,6 +557,169 @@ ul {
 }
 
 /* ============================================================
+   STATE MESSAGES (loading / error)
+   ============================================================ */
+.state-message {
+  font-size: 0.9375rem;
+  color: var(--color-text-muted);
+}
+
+.state-message--error {
+  color: var(--color-error);
+}
+
+/* ============================================================
+   SUBJECT CARD — extras de la Fase 3 (contador de unidades)
+   ============================================================ */
+.subject-card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.subject-card__count {
+  font-size: 0.75rem;
+  color: var(--color-text-muted);
+}
+
+/* ============================================================
+   MATERIA DETAIL: unidades, contenidos, fórmulas, ejercicios
+   ============================================================ */
+.unit-block {
+  margin-bottom: 3rem;
+  padding-bottom: 2.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.unit-block h2 {
+  font-size: 1.5rem;
+  margin-bottom: 0.5rem;
+}
+
+.unit-block__desc {
+  margin-bottom: 1.5rem;
+}
+
+.unit-block__group {
+  margin-top: 1.5rem;
+}
+
+.unit-block__group h3 {
+  font-size: 1rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+  margin: 0 0 1rem;
+}
+
+.content-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+  margin-bottom: 1rem;
+}
+
+.content-card h4 {
+  font-family: var(--font-body);
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.content-card p {
+  margin: 0;
+  font-size: 0.9375rem;
+}
+
+.formula-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+  gap: 1rem;
+}
+
+.formula-card {
+  background-color: var(--color-surface);
+  border: 1px solid var(--color-accent-soft);
+  border-radius: var(--radius-md);
+  padding: 1.25rem;
+}
+
+.formula-card h4 {
+  font-family: var(--font-body);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-text);
+  margin: 0 0 0.5rem;
+}
+
+.formula-card__expression {
+  font-family: var(--font-mono);
+  font-size: 1rem;
+  color: var(--color-accent);
+  margin: 0 0 0.5rem !important;
+}
+
+.formula-card p {
+  font-size: 0.875rem;
+  margin: 0;
+}
+
+.exercise-card {
+  background-color: var(--color-surface);
+  border-radius: var(--radius-md);
+  padding: 1.5rem;
+  margin-bottom: 1rem;
+}
+
+.exercise-card__header {
+  margin-bottom: 0.75rem;
+}
+
+.exercise-card__difficulty {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--color-text-muted);
+}
+
+.exercise-card__statement {
+  color: var(--color-text);
+  margin-bottom: 1rem;
+}
+
+.exercise-card__options {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  margin-bottom: 1.25rem;
+}
+
+.exercise-card__option {
+  font-size: 0.9375rem;
+  padding: 0.6rem 0.9rem;
+  border-radius: 0.5rem;
+  background-color: var(--color-surface-alt);
+}
+
+.exercise-card__option--correct {
+  background-color: rgba(74, 222, 128, 0.12);
+  color: var(--color-success);
+}
+
+.exercise-card__explanation {
+  background-color: var(--color-accent-soft);
+  border-radius: 0.5rem;
+  padding: 1rem;
+}
+
+.exercise-card__explanation p {
+  margin: 0;
+  font-size: 0.9375rem;
+  color: var(--color-text);
+}
+
+/* ============================================================
    RESPONSIVE
    ============================================================ */
 @media (max-width: 768px) {

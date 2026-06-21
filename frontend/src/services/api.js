@@ -13,3 +13,30 @@ export const checkBackendHealth = async () => {
 
   return response.json();
 };
+
+// Trae el listado de las 5 materias (con su cantidad de unidades).
+export const fetchMaterias = async () => {
+  const response = await fetch(`${API_URL}/materias`);
+
+  if (!response.ok) {
+    throw new Error('No se pudieron cargar las materias');
+  }
+
+  return response.json();
+};
+
+// Trae el detalle completo de una materia (unidades, contenidos,
+// fórmulas y ejercicios) a partir de su slug, ej: "matematica-m1".
+export const fetchMateriaDetail = async (slug) => {
+  const response = await fetch(`${API_URL}/materias/${slug}`);
+
+  if (response.status === 404) {
+    throw new Error('not-found');
+  }
+
+  if (!response.ok) {
+    throw new Error('No se pudo cargar la materia');
+  }
+
+  return response.json();
+};

@@ -1,6 +1,3 @@
-# EticaWebPage
-Trabajo de ética, pagina web
-
 # PAES Mentor
 
 Plataforma web gratuita para estudiantes de 4° medio en Chile, orientada a
@@ -35,9 +32,13 @@ paes-mentor/
 
 ```bash
 psql -U postgres -f database/init.sql
+psql -U postgres -d paes_mentor -f database/schema.sql
+psql -U postgres -d paes_mentor -f database/seed.sql
 ```
 
-Esto crea la base de datos `paes_mentor` vacía.
+Esto crea la base de datos `paes_mentor`, sus tablas (materias, unidades,
+contenidos, fórmulas, ejercicios) y la llena con datos de ejemplo
+basados en los ejes temáticos oficiales del DEMRE.
 
 ### 2. Backend
 
@@ -80,7 +81,7 @@ curl http://localhost:4000/api/health
 
 - [x] Fase 1 — Inicialización del proyecto y conexión frontend-backend-DB
 - [x] Fase 2 — Página de inicio completa, navegación y enrutamiento
-- [ ] Fase 3 — Modelo de datos y sección de Materias
+- [x] Fase 3 — Modelo de datos y sección de Materias
 - [ ] Fase 4 — Descargables (PDFs)
 - [ ] Fase 5 — Calendario PAES
 - [ ] Fase 6 — Chat IA con RAG sobre documentos oficiales
