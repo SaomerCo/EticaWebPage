@@ -1,68 +1,97 @@
-import { useEffect, useState } from 'react';
-import { checkBackendHealth } from '../services/api.js';
+import { Link } from 'react-router-dom';
+import { subjects } from '../data/subjects.js';
+import { proximasFechas } from '../data/paesDates.js';
+import CountdownPaes from '../components/CountdownPaes.jsx';
+import SubjectCard from '../components/SubjectCard.jsx';
+import SystemStatus from '../components/SystemStatus.jsx';
 
-// Estado de carga explícito en 3 valores (loading / connected / error)
-// en vez de booleanos sueltos (isLoading, hasError...). Es más fácil de
-// leer y evita estados imposibles, como "cargando" y "con error" a la vez.
-const Home = () => {
-  const [status, setStatus] = useState('loading');
-  const [info, setInfo] = useState(null);
+const formatFecha = (date) =>
+  date.toLocaleDateString('es-CL', { day: 'numeric', month: 'long', year: 'numeric' });
 
-  useEffect(() => {
-    const fetchHealth = async () => {
-      try {
-        const data = await checkBackendHealth();
-        setInfo(data);
-        setStatus('connected');
-      } catch (error) {
-        setStatus('error');
-      }
-    };
-
-    fetchHealth();
-  }, []);
-
-  return (
-    <main className="home">
-      <header className="home__hero">
-        <span className="home__eyebrow">Preparación PAES · Chile</span>
-        <h1>PAES Mentor</h1>
+const Home = () => (
+  <main>
+    <section className="hero">
+      <div className="hero__copy">
+        <span className="hero__pill">Inscripción PAES Regular abierta hasta el 22 de julio</span>
+        <h1>
+          Prepara tu PAES con todo el material oficial, <span>en un solo lugar</span>.
+        </h1>
         <p>
-          Plataforma gratuita que centraliza material oficial de la PAES y
-          ofrece una IA educativa especializada en tu preparación.
+          PAES Mentor centraliza guías, ensayos y formularios oficiales, y te
+          conecta con un mentor de IA que solo responde sobre la PAES: nada
+          de respuestas genéricas, nada fuera de lo que realmente te van a
+          preguntar.
         </p>
-      </header>
+        <div className="hero__actions">
+          <Link to="/materias" className="button button--primary">
+            Ver materias
+          </Link>
+          <Link to="/chat" className="button button--ghost">
+            Hablar con el Mentor IA
+          </Link>
+        </div>
+      </div>
 
-      <section className="status-card" aria-live="polite">
-        {status === 'loading' && (
-          <p className="status status--loading">Verificando conexión con el servidor...</p>
-        )}
+      <CountdownPaes />
+    </section>
 
-        {status === 'connected' && (
-          <>
-            <p className="status status--ok">Backend conectado correctamente</p>
-            <dl className="status-card__details">
-              <div>
-                <dt>Base de datos</dt>
-                <dd>{info.database}</dd>
-              </div>
-              <div>
-                <dt>Hora del servidor</dt>
-                <dd>{new Date(info.serverTime).toLocaleString('es-CL')}</dd>
-              </div>
-            </dl>
-          </>
-        )}
+    <section className="section">
+      <div className="section__heading">
+        <h2>Materias</h2>
+        <p>Las cinco pruebas del proceso de admisión, organizadas por unidad.</p>
+      </div>
+      <div className="subject-grid">
+        {subjects.map((subject) => (
+          <SubjectCard key={subject.id} subject={subject} />
+        ))}
+      </div>
+    </section>
 
-        {status === 'error' && (
-          <p className="status status--error">
-            No se pudo conectar con el backend. Verifica que el servidor esté
-            corriendo en el puerto 4000.
-          </p>
-        )}
-      </section>
-    </main>
-  );
-};
+    <section className="section section--split">
+      <div>
+        <span className="section__eyebrow">Mentor IA</span>
+        <h2>Una IA que solo sabe de PAES</h2>
+        <p>
+          El chat está construido sobre un sistema RAG que consulta
+          exclusivamente documentos oficiales: temarios, formularios y
+          ensayos del DEMRE. Si le preguntas algo fuera de la PAES, te lo va
+          a decir directamente en vez de inventar una respuesta.
+        </p>
+        <Link to="/chat" className="button button--primary">
+          Probar el chat
+        </Link>
+      </div>
+      <ul className="feature-list">
+        <li>Ejercicios resueltos paso a paso, no solo el resultado final.</li>
+        <li>Fórmulas y resúmenes oficiales de Matemática M1 y M2.</li>
+        <li>Fechas de inscripción y rendición siempre actualizadas.</li>
+        <li>Estrategias de estudio enfocadas en el tiempo que te queda.</li>
+      </ul>
+    </section>
+
+    <section className="section">
+      <div className="section__heading">
+        <h2>Próximas fechas clave</h2>
+        <p>Calendario oficial del Proceso de Admisión 2027 (DEMRE).</p>
+      </div>
+      <ul className="date-list">
+        {proximasFechas.map((evento) => (
+          <li key={evento.id}>
+            <span className="date-list__date">{formatFecha(evento.fecha)}</span>
+            <div>
+              <p className="date-list__title">{evento.titulo}</p>
+              <p className="date-list__desc">{evento.descripcion}</p>
+            </div>
+          </li>
+        ))}
+      </ul>
+      <Link to="/calendario" className="button button--ghost">
+        Ver calendario completo
+      </Link>
+    </section>
+
+    <SystemStatus />
+  </main>
+);
 
 export default Home;

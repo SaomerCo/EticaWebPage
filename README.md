@@ -76,7 +76,7 @@ curl http://localhost:4000/api/health
 ## Estado del proyecto
 
 - [x] Fase 1 — Inicialización del proyecto y conexión frontend-backend-DB
-- [ ] Fase 2 — Página de inicio completa, navegación y enrutamiento
+- [x] Fase 2 — Página de inicio completa, navegación y enrutamiento
 - [ ] Fase 3 — Modelo de datos y sección de Materias
 - [ ] Fase 4 — Descargables (PDFs)
 - [ ] Fase 5 — Calendario PAES
