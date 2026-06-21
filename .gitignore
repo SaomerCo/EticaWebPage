@@ -1,0 +1,14 @@
+# Dependencias
+node_modules/
+
+# Builds
+dist/
+build/
+
+# Variables de entorno (cada uno tiene su .env.example versionado)
+.env
+.env.local
+
+# Logs y sistema
+*.log
+.DS_Store
