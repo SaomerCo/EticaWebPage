@@ -1,26 +1,27 @@
-const Chat = () => (
-  <main className="page page--narrow">
-    <div className="page__heading">
+import { useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
+
+// La interfaz real del chat vive en components/ChatWidget.jsx, montada
+// en Layout para persistir entre rutas. Esta página solo le pide al
+// widget que se expanda apenas alguien visita /chat directamente (por
+// ejemplo, si comparten el link). Si por alguna razón el chat sigue
+// minimizado, este texto queda como respaldo visible.
+const Chat = () => {
+  const { openChat } = useOutletContext();
+
+  useEffect(() => {
+    openChat();
+  }, [openChat]);
+
+  return (
+    <main className="page page--narrow page--center">
       <h1>Mentor IA</h1>
       <p>
-        Disponible en la <strong>Fase 6</strong>, cuando conectemos Ollama y
-        el sistema RAG sobre los documentos oficiales de la PAES.
+        Si no se abrió automáticamente, haz click en el botón "Mentor IA" en
+        la esquina inferior derecha de la pantalla.
       </p>
-    </div>
-
-    <div className="chat-mock" aria-disabled="true">
-      <div className="chat-mock__message">
-        Hola, soy tu Mentor PAES. Puedo ayudarte con contenido oficial,
-        ejercicios paso a paso y fechas del proceso de admisión.
-      </div>
-      <div className="chat-mock__input">
-        <input type="text" placeholder="Escribe tu pregunta sobre la PAES…" disabled />
-        <button type="button" disabled>
-          Enviar
-        </button>
-      </div>
-    </div>
-  </main>
-);
+    </main>
+  );
+};
 
 export default Chat;

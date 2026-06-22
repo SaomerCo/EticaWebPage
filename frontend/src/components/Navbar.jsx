@@ -7,6 +7,7 @@ import { NavLink } from 'react-router-dom';
 const links = [
   { to: '/', label: 'Inicio', end: true },
   { to: '/materias', label: 'Materias' },
+  { to: '/descargables', label: 'Descargables' },
   { to: '/calendario', label: 'Calendario' },
 ];
 

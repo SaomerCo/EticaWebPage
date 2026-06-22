@@ -61,20 +61,32 @@ export const getMateriaBySlug = async (req, res) => {
     const unidades = unidadesResult.rows;
     const unidadIds = unidades.map((unidad) => unidad.id);
 
-    const [contenidosResult, formulasResult, ejerciciosResult] = await Promise.all([
-      pool.query(
-        'SELECT id, unidad_id, titulo, cuerpo FROM contenidos WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
-        [unidadIds]
-      ),
-      pool.query(
-        'SELECT id, unidad_id, titulo, expresion, explicacion FROM formulas WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
-        [unidadIds]
-      ),
-      pool.query(
-        'SELECT id, unidad_id, enunciado, alternativas, respuesta_correcta, explicacion, dificultad FROM ejercicios WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
-        [unidadIds]
-      ),
-    ]);
+    const [contenidosResult, formulasResult, ejerciciosResult, descargablesResult, paginasResult] =
+      await Promise.all([
+        pool.query(
+          'SELECT id, unidad_id, titulo, cuerpo FROM contenidos WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
+          [unidadIds]
+        ),
+        pool.query(
+          'SELECT id, unidad_id, titulo, expresion, explicacion FROM formulas WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
+          [unidadIds]
+        ),
+        pool.query(
+          'SELECT id, unidad_id, enunciado, alternativas, respuesta_correcta, explicacion, dificultad FROM ejercicios WHERE unidad_id = ANY($1::int[]) ORDER BY orden',
+          [unidadIds]
+        ),
+        pool.query(
+          'SELECT id, tipo, titulo, descripcion, url, fuente FROM descargables WHERE materia_id = $1 ORDER BY orden',
+          [materia.id]
+        ),
+        // "materia_id = $1 OR materia_id IS NULL": trae tanto las
+        // páginas específicas de esta materia como las generales
+        // (válidas para cualquier materia, como Aprendo en Línea).
+        pool.query(
+          'SELECT id, titulo, descripcion, url FROM paginas_recomendadas WHERE materia_id = $1 OR materia_id IS NULL ORDER BY orden',
+          [materia.id]
+        ),
+      ]);
 
     // Agrupa un arreglo de filas por su unidad_id, ej:
     // [{unidad_id: 3, ...}, {unidad_id: 3, ...}, {unidad_id: 4, ...}]
@@ -98,7 +110,12 @@ export const getMateriaBySlug = async (req, res) => {
       ejercicios: ejerciciosPorUnidad[unidad.id] || [],
     }));
 
-    res.json({ ...materia, unidades: unidadesConDetalle });
+    res.json({
+      ...materia,
+      unidades: unidadesConDetalle,
+      descargables: descargablesResult.rows,
+      paginasRecomendadas: paginasResult.rows,
+    });
   } catch (error) {
     res.status(500).json({
       status: 'error',

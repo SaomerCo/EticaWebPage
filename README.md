@@ -24,6 +24,7 @@ paes-mentor/
 
 - Node.js 18 o superior
 - PostgreSQL 14 o superior, corriendo localmente
+- [Ollama](https://ollama.com/download) instalado, con los modelos `llama3.2` y `nomic-embed-text` descargados (`ollama pull llama3.2` y `ollama pull nomic-embed-text`)
 - npm
 
 ## Puesta en marcha (Fase 1)
@@ -34,11 +35,28 @@ paes-mentor/
 psql -U postgres -f database/init.sql
 psql -U postgres -d paes_mentor -f database/schema.sql
 psql -U postgres -d paes_mentor -f database/seed.sql
+psql -U postgres -d paes_mentor -f database/descargables_schema.sql
+psql -U postgres -d paes_mentor -f database/descargables_seed.sql
+psql -U postgres -d paes_mentor -f database/calendario_schema.sql
+psql -U postgres -d paes_mentor -f database/calendario_seed.sql
+psql -U postgres -d paes_mentor -f database/rag_schema.sql
+psql -U postgres -d paes_mentor -f database/paginas_recomendadas_schema.sql
+psql -U postgres -d paes_mentor -f database/paginas_recomendadas_seed.sql
 ```
 
-Esto crea la base de datos `paes_mentor`, sus tablas (materias, unidades,
-contenidos, fórmulas, ejercicios) y la llena con datos de ejemplo
-basados en los ejes temáticos oficiales del DEMRE.
+Esto crea la base de datos `paes_mentor` y todas sus tablas (materias,
+unidades, contenidos, fórmulas, ejercicios, descargables, eventos del
+calendario, documentos RAG), con datos de ejemplo basados en
+información oficial verificada del DEMRE. Después de levantar el
+backend por primera vez, corre también:
+
+```bash
+cd backend
+npm run ingest:rag
+```
+
+para generar los embeddings del contenido de la plataforma (necesario
+para que el Mentor IA pueda buscar contexto real al responder).
 
 ### 2. Backend
 
@@ -82,6 +100,11 @@ curl http://localhost:4000/api/health
 - [x] Fase 1 — Inicialización del proyecto y conexión frontend-backend-DB
 - [x] Fase 2 — Página de inicio completa, navegación y enrutamiento
 - [x] Fase 3 — Modelo de datos y sección de Materias
-- [ ] Fase 4 — Descargables (PDFs)
-- [ ] Fase 5 — Calendario PAES
-- [ ] Fase 6 — Chat IA con RAG sobre documentos oficiales
+- [x] Fase 4 — Descargables (PDFs)
+- [x] Fase 5 — Calendario PAES
+- [x] Fase 6a — Chat IA conectado a Ollama (sin RAG todavía)
+- [x] Fase 6b — Sistema RAG sobre documentos oficiales
+- [x] Fase 8a — Rediseño visual + Mentor IA a pantalla completa
+- [x] Fase 8b — Materias: recursos curados en vez de contenido fijo
+- [x] Fase 8c — Cuestionarios configurables + KaTeX + banco de preguntas ampliado
+- [ ] Fase 9 — Lanzamiento

@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { fetchMateriaDetail } from '../services/api.js';
-import ExerciseCard from '../components/ExerciseCard.jsx';
+import MathText from '../components/MathText.jsx';
 
 const MateriaDetail = () => {
   const { id: slug } = useParams();
@@ -62,6 +62,18 @@ const MateriaDetail = () => {
     );
   }
 
+  // Un solo arreglo de "recursos" mezclando descargables (PDFs
+  // oficiales) y páginas recomendadas (sitios externos), cada uno
+  // marcado con su propio tipo para que la tarjeta lo distinga
+  // visualmente. Es más simple para el usuario ver "todo lo que puedo
+  // consultar" en un solo lugar que tener que mirar dos secciones
+  // separadas para básicamente la misma pregunta ("¿dónde estudio
+  // esto?").
+  const recursos = [
+    ...materia.descargables.map((item) => ({ ...item, categoria: 'descargable' })),
+    ...materia.paginasRecomendadas.map((item) => ({ ...item, categoria: 'pagina' })),
+  ];
+
   return (
     <main className="page">
       <div className="page__heading">
@@ -74,56 +86,84 @@ const MateriaDetail = () => {
         <p>{materia.descripcion}</p>
       </div>
 
-      {materia.unidades.map((unidad) => (
-        <section key={unidad.id} className="unit-block">
-          <h2>{unidad.nombre}</h2>
-          {unidad.descripcion && <p className="unit-block__desc">{unidad.descripcion}</p>}
+      <section className="quiz-cta">
+        <div>
+          <span className="quiz-cta__eyebrow">Nuevo</span>
+          <h2>Practica con un cuestionario</h2>
+          <p>
+            Elige cuántas preguntas quieres, la dificultad y si quieres tiempo
+            límite. Cada vez son preguntas distintas. Al final ves qué fallaste
+            y qué te conviene repasar.
+          </p>
+        </div>
+        <Link
+          to={`/cuestionario?materia=${materia.slug}`}
+          className="button button--primary"
+        >
+          Configurar cuestionario
+        </Link>
+      </section>
 
-          {unidad.contenidos.length > 0 && (
-            <div className="unit-block__group">
-              <h3>Contenidos</h3>
-              {unidad.contenidos.map((contenido) => (
-                <article key={contenido.id} className="content-card">
-                  <h4>{contenido.titulo}</h4>
-                  <p>{contenido.cuerpo}</p>
-                </article>
-              ))}
-            </div>
-          )}
+      <section className="unit-block">
+        <h2>Recursos para estudiar</h2>
 
-          {unidad.formulas.length > 0 && (
-            <div className="unit-block__group">
-              <h3>Fórmulas y resúmenes</h3>
-              <div className="formula-grid">
-                {unidad.formulas.map((formula) => (
-                  <article key={formula.id} className="formula-card">
-                    <h4>{formula.titulo}</h4>
-                    <p className="formula-card__expression">{formula.expresion}</p>
-                    {formula.explicacion && <p>{formula.explicacion}</p>}
-                  </article>
-                ))}
-              </div>
-            </div>
-          )}
+        {recursos.length > 0 ? (
+          <div className="download-grid">
+            {recursos.map((item) => (
+              <article key={`${item.categoria}-${item.id}`} className="download-card">
+                <span className="download-card__type">
+                  {item.categoria === 'descargable' ? item.tipo : 'Página recomendada'}
+                </span>
+                <h3>{item.titulo}</h3>
+                {item.descripcion && <p>{item.descripcion}</p>}
+                <a
+                  href={item.url}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="button button--ghost"
+                >
+                  {item.categoria === 'descargable' ? 'Ver documento oficial ↗' : 'Visitar sitio ↗'}
+                </a>
+                {item.fuente && <span className="download-card__source">Fuente: {item.fuente}</span>}
+              </article>
+            ))}
+          </div>
+        ) : (
+          <div className="placeholder-card">
+            <p>Todavía no hay recursos cargados para esta materia.</p>
+          </div>
+        )}
+      </section>
 
-          {unidad.ejercicios.length > 0 && (
-            <div className="unit-block__group">
-              <h3>Ejercicios</h3>
-              {unidad.ejercicios.map((ejercicio) => (
-                <ExerciseCard key={ejercicio.id} exercise={ejercicio} />
-              ))}
-            </div>
+      {materia.unidades.some((unidad) => unidad.formulas.length > 0) && (
+        <section className="unit-block">
+          <h2>Fórmulas y resúmenes rápidos</h2>
+          {materia.unidades.map(
+            (unidad) =>
+              unidad.formulas.length > 0 && (
+                <div key={unidad.id} className="unit-block__group">
+                  <h3>{unidad.nombre}</h3>
+                  <div className="formula-grid">
+                    {unidad.formulas.map((formula) => (
+                      <article key={formula.id} className="formula-card">
+                        <h4>{formula.titulo}</h4>
+                        <p className="formula-card__expression"><MathText text={formula.expresion} /></p>
+                        {formula.explicacion && <p><MathText text={formula.explicacion} /></p>}
+                      </article>
+                    ))}
+                  </div>
+                </div>
+              )
           )}
         </section>
-      ))}
+      )}
 
-      <div className="placeholder-card">
-        <p>
-          Los PDFs descargables de esta materia (guías, ensayos,
-          formularios) se implementan en la <strong>Fase 4</strong>.
-        </p>
+      <div className="page__actions">
         <Link to="/materias" className="button button--ghost">
           Volver a materias
+        </Link>
+        <Link to="/descargables" className="button button--ghost">
+          Ver todos los descargables
         </Link>
       </div>
     </main>

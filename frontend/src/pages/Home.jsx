@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { proximasFechas } from '../data/paesDates.js';
-import { fetchMaterias } from '../services/api.js';
+import { fetchMaterias, fetchCalendario } from '../services/api.js';
 import CountdownPaes from '../components/CountdownPaes.jsx';
 import SubjectCard from '../components/SubjectCard.jsx';
 import SystemStatus from '../components/SystemStatus.jsx';
@@ -12,9 +11,11 @@ const formatFecha = (date) =>
 const Home = () => {
   const [subjectsStatus, setSubjectsStatus] = useState('loading');
   const [subjects, setSubjects] = useState([]);
+  const [eventsStatus, setEventsStatus] = useState('loading');
+  const [eventos, setEventos] = useState([]);
 
   useEffect(() => {
-    const load = async () => {
+    const loadSubjects = async () => {
       try {
         const data = await fetchMaterias();
         setSubjects(data);
@@ -24,7 +25,20 @@ const Home = () => {
       }
     };
 
-    load();
+    const loadEventos = async () => {
+      try {
+        // Los 3 eventos vigentes o próximos más cercanos, calculados
+        // por el propio backend (ver calendario.controller.js).
+        const data = await fetchCalendario({ proximos: 3 });
+        setEventos(data);
+        setEventsStatus('ready');
+      } catch (error) {
+        setEventsStatus('error');
+      }
+    };
+
+    loadSubjects();
+    loadEventos();
   }, []);
 
   return (
@@ -102,17 +116,26 @@ const Home = () => {
           <h2>Próximas fechas clave</h2>
           <p>Calendario oficial del Proceso de Admisión 2027 (DEMRE).</p>
         </div>
-        <ul className="date-list">
-          {proximasFechas.map((evento) => (
-            <li key={evento.id}>
-              <span className="date-list__date">{formatFecha(evento.fecha)}</span>
-              <div>
-                <p className="date-list__title">{evento.titulo}</p>
-                <p className="date-list__desc">{evento.descripcion}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
+
+        {eventsStatus === 'loading' && <p className="state-message">Cargando fechas…</p>}
+        {eventsStatus === 'error' && (
+          <p className="state-message state-message--error">
+            No se pudieron cargar las fechas. Verifica que el backend esté corriendo.
+          </p>
+        )}
+        {eventsStatus === 'ready' && (
+          <ul className="date-list">
+            {eventos.map((evento) => (
+              <li key={evento.id}>
+                <span className="date-list__date">{formatFecha(new Date(evento.fecha_inicio))}</span>
+                <div>
+                  <p className="date-list__title">{evento.titulo}</p>
+                  <p className="date-list__desc">{evento.descripcion}</p>
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
         <Link to="/calendario" className="button button--ghost">
           Ver calendario completo
         </Link>
